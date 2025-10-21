@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Records - Enhanced Minimalist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom scrollbar for better UX */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f8fafc;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-break {
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+    <!-- Compact Header -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="px-4 py-2">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <h1 class="text-lg font-semibold text-gray-900">Patient Records</h1>
+                    <span class="text-sm text-gray-500">1,234 records</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="toggleAnalytics()" class="px-3 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors flex items-center space-x-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        <span>Statistics</span>
+                    </button>
+                    <button class="px-3 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors flex items-center space-x-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        <span>Export</span>
+                    </button>
+                    <button class="px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors flex items-center space-x-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                        <span>Import CSV</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex h-[calc(100vh-53px)]">
+        <!-- Narrow Sidebar with Filters Only -->
+        <aside class="w-48 bg-white border-r border-gray-200 overflow-y-auto">
+            <div class="p-3">
+                <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Filters</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-xs font-medium text-gray-700">Age Range</label>
+                        <select class="mt-1 w-full px-2 py-1.5 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            <option>All Ages</option>
+                            <option>0-17</option>
+                            <option>18-29</option>
+                            <option>30-39</option>
+                            <option>40-49</option>
+                            <option>50-59</option>
+                            <option>60-69</option>
+                            <option>70-79</option>
+                            <option>80+</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-medium text-gray-700">Disease Category</label>
+                        <select class="mt-1 w-full px-2 py-1.5 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            <option>All Categories</option>
+                            <option>Blood & Blood Components</option>
+                            <option>Cardiovascular</option>
+                            <option>Development Anomalies</option>
+                            <option>Endocrine Nutrition</option>
+                            <option>ENT</option>
+                            <option>Gastro & Digestive</option>
+                            <option>Infectious</option>
+                            <option>Neurology</option>
+                            <option>OB</option>
+                            <option>Oncology</option>
+                            <option>Ortho</option>
+                            <option>Pulmo</option>
+                            <option>Renal</option>
+                            <option>Surgery</option>
+                            <option>Trauma</option>
+                            <option>Urology</option>
+                            <option>Psych</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-medium text-gray-700">Gender</label>
+                        <select class="mt-1 w-full px-2 py-1.5 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            <option>All</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                        </select>
+                    </div>
+                    <button class="w-full mt-3 px-2 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors">
+                        Clear Filters
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Table Area - Expanded -->
+        <div class="flex-1 overflow-hidden bg-white">
+            <div class="h-full overflow-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50 sticky top-0 z-10">
+                        <tr>
+                            <th class="sticky left-0 bg-gray-50 px-3 py-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">ID</th>
+                            <th class="sticky left-[60px] bg-gray-50 px-3 py-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Name</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Age</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Gender</th>
+                            <th class="px-3 py-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Blood</th>
+                            <th class="px-3 py-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Cardio</th>
+                            <th class="px-3 py-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Dev Anom</th>
+                            <th class="px-3 py-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Endo</th>
+                            <th class="px-3 py-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">ENT</th>
+                            <th class="px-3 py-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Gastro</th>
+                            <th class="px-3 py-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Infectious</th>
+                            <th class="px-3 py-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Neuro</th>
+                            <th class="px-3 py-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">OB</th>
+                            <th class="px-3 py-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Onco</th>
+                            <th class="px-3 py-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Ortho</th>
+                            <th class="px-3 py-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Pulmo</th>
+                            <th class="px-3 py-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Renal</th>
+                            <th class="px-3 py-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Surgery</th>
+                            <th class="px-3 py-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Trauma</th>
+                            <th class="px-3 py-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Urology</th>
+                            <th class="px-3 py-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Psych</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-100">
+                        <!-- Sample rows with reduced padding -->
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="sticky left-0 bg-white px-3 py-2 text-xs font-medium text-gray-900 whitespace-nowrap">P001</td>
+                            <td class="sticky left-[60px] bg-white px-3 py-2 text-xs text-gray-900 whitespace-nowrap">John Doe</td>
+                            <td class="px-3 py-2 whitespace-nowrap">
+                                <input type="number" value="45" class="w-12 px-1 py-0.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-xs text-gray-900 whitespace-nowrap">M</td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="sticky left-0 bg-white px-3 py-2 text-xs font-medium text-gray-900 whitespace-nowrap">P002</td>
+                            <td class="sticky left-[60px] bg-white px-3 py-2 text-xs text-gray-900 whitespace-nowrap">Jane Smith</td>
+                            <td class="px-3 py-2 whitespace-nowrap">
+                                <input type="number" value="32" class="w-12 px-1 py-0.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-xs text-gray-900 whitespace-nowrap">F</td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="sticky left-0 bg-white px-3 py-2 text-xs font-medium text-gray-900 whitespace-nowrap">P003</td>
+                            <td class="sticky left-[60px] bg-white px-3 py-2 text-xs text-gray-900 whitespace-nowrap">Robert Johnson</td>
+                            <td class="px-3 py-2 whitespace-nowrap">
+                                <input type="number" value="67" class="w-12 px-1 py-0.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-xs text-gray-900 whitespace-nowrap">M</td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="sticky left-0 bg-white px-3 py-2 text-xs font-medium text-gray-900 whitespace-nowrap">P004</td>
+                            <td class="sticky left-[60px] bg-white px-3 py-2 text-xs text-gray-900 whitespace-nowrap">Sarah Williams</td>
+                            <td class="px-3 py-2 whitespace-nowrap">
+                                <input type="number" value="28" class="w-12 px-1 py-0.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-xs text-gray-900 whitespace-nowrap">F</td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="sticky left-0 bg-white px-3 py-2 text-xs font-medium text-gray-900 whitespace-nowrap">P005</td>
+                            <td class="sticky left-[60px] bg-white px-3 py-2 text-xs text-gray-900 whitespace-nowrap">Michael Brown</td>
+                            <td class="px-3 py-2 whitespace-nowrap">
+                                <input type="number" value="55" class="w-12 px-1 py-0.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-xs text-gray-900 whitespace-nowrap">M</td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <input type="checkbox" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Analytics Modal -->
+    <div id="analyticsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg w-full max-w-5xl max-h-[90vh] overflow-hidden shadow-xl">
+            <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-gray-900">Patient Statistics & Analytics</h2>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="window.print()" class="no-print px-3 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors flex items-center space-x-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                            </svg>
+                            <span>Print Report</span>
+                        </button>
+                        <button onclick="toggleAnalytics()" class="no-print text-gray-400 hover:text-gray-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 overflow-y-auto max-h-[calc(90vh-80px)]">
+                <!-- Summary Stats -->
+                <div class="grid grid-cols-4 gap-4 mb-6">
+                    <div class="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                        <div class="text-2xl font-bold text-blue-900">1,234</div>
+                        <div class="text-sm text-blue-700">Total Patients</div>
+                    </div>
+                    <div class="bg-green-50 rounded-lg p-3 border border-green-200">
+                        <div class="text-2xl font-bold text-green-900">42.5</div>
+                        <div class="text-sm text-green-700">Average Age</div>
+                    </div>
+                    <div class="bg-purple-50 rounded-lg p-3 border border-purple-200">
+                        <div class="text-2xl font-bold text-purple-900">17</div>
+                        <div class="text-sm text-purple-700">Disease Categories</div>
+                    </div>
+                    <div class="bg-orange-50 rounded-lg p-3 border border-orange-200">
+                        <div class="text-2xl font-bold text-orange-900">68%</div>
+                        <div class="text-sm text-orange-700">With Conditions</div>
+                    </div>
+                </div>
+
+                <!-- Charts Grid -->
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-3">Age Distribution</h3>
+                        <canvas id="ageChart"></canvas>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-3">Disease Prevalence</h3>
+                        <canvas id="diseaseChart"></canvas>
+                    </div>
+                    <div class="col-span-2 bg-gray-50 rounded-lg p-4 border border-gray-200 print-break">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-3">Disease Distribution by Age Group</h3>
+                        <canvas id="trendsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Data Table Summary -->
+                <div class="mt-6 bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Top Conditions Summary</h3>
+                    <table class="w-full text-xs">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th class="text-left py-2">Condition</th>
+                                <th class="text-right py-2">Count</th>
+                                <th class="text-right py-2">Percentage</th>
+                                <th class="text-right py-2">Avg Age</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-100">
+                                <td class="py-2">Cardiovascular</td>
+                                <td class="text-right">320</td>
+                                <td class="text-right">26%</td>
+                                <td class="text-right">54.2</td>
+                            </tr>
+                            <tr class="border-b border-gray-100">
+                                <td class="py-2">Endocrine</td>
+                                <td class="text-right">280</td>
+                                <td class="text-right">23%</td>
+                                <td class="text-right">48.7</td>
+                            </tr>
+                            <tr class="border-b border-gray-100">
+                                <td class="py-2">Infectious</td>
+                                <td class="text-right">200</td>
+                                <td class="text-right">16%</td>
+                                <td class="text-right">35.3</td>
+                            </tr>
+                            <tr class="border-b border-gray-100">
+                                <td class="py-2">Neurology</td>
+                                <td class="text-right">150</td>
+                                <td class="text-right">12%</td>
+                                <td class="text-right">42.1</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2">Oncology</td>
+                                <td class="text-right">120</td>
+                                <td class="text-right">10%</td>
+                                <td class="text-right">58.9</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleAnalytics() {
+            const modal = document.getElementById('analyticsModal');
+            modal.classList.toggle('hidden');
+
+            if (!modal.classList.contains('hidden')) {
+                // Initialize charts when modal opens
+                initCharts();
+            }
+        }
+
+        function initCharts() {
+            // Age Distribution Chart
+            const ageCtx = document.getElementById('ageChart').getContext('2d');
+            new Chart(ageCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['0-17', '18-29', '30-39', '40-49', '50-59', '60-69', '70-79', '80+'],
+                    datasets: [{
+                        label: 'Patients',
+                        data: [120, 190, 230, 280, 220, 180, 140, 74],
+                        backgroundColor: '#3B82F6',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Disease Prevalence Chart
+            const diseaseCtx = document.getElementById('diseaseChart').getContext('2d');
+            new Chart(diseaseCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Cardiovascular', 'Endocrine', 'Infectious', 'Neurology', 'Oncology', 'Other'],
+                    datasets: [{
+                        data: [320, 280, 200, 150, 120, 164],
+                        backgroundColor: [
+                            '#EF4444',
+                            '#F59E0B',
+                            '#10B981',
+                            '#3B82F6',
+                            '#8B5CF6',
+                            '#6B7280'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 10,
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Trends Chart
+            const trendsCtx = document.getElementById('trendsChart').getContext('2d');
+            new Chart(trendsCtx, {
+                type: 'line',
+                data: {
+                    labels: ['0-17', '18-29', '30-39', '40-49', '50-59', '60-69', '70-79', '80+'],
+                    datasets: [{
+                        label: 'Cardiovascular',
+                        data: [5, 12, 35, 68, 85, 72, 38, 15],
+                        borderColor: '#EF4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Endocrine',
+                        data: [3, 18, 42, 58, 62, 55, 32, 10],
+                        borderColor: '#F59E0B',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Neurology',
+                        data: [8, 15, 22, 28, 32, 25, 15, 5],
+                        borderColor: '#3B82F6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 10,
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Patients',
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Age Groups',
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
