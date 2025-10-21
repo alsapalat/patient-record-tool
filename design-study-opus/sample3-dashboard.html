@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Records - Modern Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Dark mode optimized scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* Glassmorphism effect */
+        .glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        /* Smooth animations */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom toggle switch */
+        .toggle-checkbox:checked {
+            background-color: #3b82f6;
+        }
+        .toggle-checkbox {
+            transition: background-color 0.2s;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans antialiased">
+    <!-- Background gradient -->
+    <div class="fixed inset-0 bg-gradient-to-br from-slate-900 via-blue-900/20 to-slate-900"></div>
+
+    <!-- Left Sidebar -->
+    <aside class="fixed left-0 top-0 h-full w-20 glass border-r border-slate-700/50 z-50">
+        <div class="flex flex-col items-center py-6 space-y-6">
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                <span class="text-white font-bold text-xl">P</span>
+            </div>
+
+            <nav class="flex flex-col space-y-4">
+                <button class="w-12 h-12 flex items-center justify-center text-blue-400 bg-slate-800/50 rounded-xl">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                </button>
+                <button class="w-12 h-12 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-all">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </button>
+                <button class="w-12 h-12 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-all">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </button>
+                <button class="w-12 h-12 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-all">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </button>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="ml-20 relative z-10">
+        <!-- Top Header -->
+        <header class="glass sticky top-0 z-40 px-8 py-4 border-b border-slate-700/50">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                        Patient Analytics Dashboard
+                    </h1>
+                    <p class="text-sm text-slate-400 mt-1">Real-time patient data monitoring</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" placeholder="Search patients..."
+                               class="w-64 px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-colors">
+                        <svg class="absolute right-3 top-2.5 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <button class="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium hover:from-blue-700 hover:to-purple-700 transition-all">
+                        Import CSV
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Grid -->
+        <div class="p-8">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="glass rounded-2xl p-6 fade-in">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xs text-green-400 bg-green-400/20 px-2 py-1 rounded-full">+12%</span>
+                    </div>
+                    <div class="text-3xl font-bold text-white mb-1">1,234</div>
+                    <div class="text-sm text-slate-400">Total Patients</div>
+                </div>
+
+                <div class="glass rounded-2xl p-6 fade-in" style="animation-delay: 0.1s">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xs text-slate-400">Avg</span>
+                    </div>
+                    <div class="text-3xl font-bold text-white mb-1">42.5</div>
+                    <div class="text-sm text-slate-400">Average Age</div>
+                </div>
+
+                <div class="glass rounded-2xl p-6 fade-in" style="animation-delay: 0.2s">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xs text-yellow-400 bg-yellow-400/20 px-2 py-1 rounded-full">Active</span>
+                    </div>
+                    <div class="text-3xl font-bold text-white mb-1">892</div>
+                    <div class="text-sm text-slate-400">Active Cases</div>
+                </div>
+
+                <div class="glass rounded-2xl p-6 fade-in" style="animation-delay: 0.3s">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xs text-red-400 bg-red-400/20 px-2 py-1 rounded-full">-3%</span>
+                    </div>
+                    <div class="text-3xl font-bold text-white mb-1">17</div>
+                    <div class="text-sm text-slate-400">Disease Categories</div>
+                </div>
+            </div>
+
+            <!-- Main Dashboard Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Patient List -->
+                <div class="lg:col-span-2 glass rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-semibold text-white">Recent Patients</h2>
+                        <div class="flex items-center space-x-2">
+                            <button class="px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-white transition-colors">All</button>
+                            <button class="px-3 py-1.5 text-xs font-medium text-blue-400 bg-blue-400/20 rounded-lg">Today</button>
+                            <button class="px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-white transition-colors">Week</button>
+                            <button class="px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-white transition-colors">Month</button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 max-h-[500px] overflow-y-auto">
+                        <!-- Patient Row 1 -->
+                        <div class="bg-slate-800/30 rounded-xl p-4 hover:bg-slate-800/50 transition-all cursor-pointer">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white font-semibold">
+                                        JD
+                                    </div>
+                                    <div>
+                                        <h3 class="font-medium text-white">John Doe</h3>
+                                        <p class="text-xs text-slate-400">P001 • Male • 45 years</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="flex -space-x-1">
+                                        <span class="w-6 h-6 bg-blue-500/30 text-[10px] text-blue-300 rounded-full flex items-center justify-center border border-slate-700">C</span>
+                                        <span class="w-6 h-6 bg-purple-500/30 text-[10px] text-purple-300 rounded-full flex items-center justify-center border border-slate-700">G</span>
+                                        <span class="w-6 h-6 bg-orange-500/30 text-[10px] text-orange-300 rounded-full flex items-center justify-center border border-slate-700">P</span>
+                                    </div>
+                                    <button class="text-slate-400 hover:text-white">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Patient Row 2 -->
+                        <div class="bg-slate-800/30 rounded-xl p-4 hover:bg-slate-800/50 transition-all cursor-pointer">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-semibold">
+                                        JS
+                                    </div>
+                                    <div>
+                                        <h3 class="font-medium text-white">Jane Smith</h3>
+                                        <p class="text-xs text-slate-400">P002 • Female • 32 years</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="flex -space-x-1">
+                                        <span class="w-6 h-6 bg-green-500/30 text-[10px] text-green-300 rounded-full flex items-center justify-center border border-slate-700">E</span>
+                                        <span class="w-6 h-6 bg-yellow-500/30 text-[10px] text-yellow-300 rounded-full flex items-center justify-center border border-slate-700">N</span>
+                                        <span class="w-6 h-6 bg-pink-500/30 text-[10px] text-pink-300 rounded-full flex items-center justify-center border border-slate-700">O</span>
+                                    </div>
+                                    <button class="text-slate-400 hover:text-white">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Patient Row 3 -->
+                        <div class="bg-slate-800/30 rounded-xl p-4 hover:bg-slate-800/50 transition-all cursor-pointer">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white font-semibold">
+                                        RJ
+                                    </div>
+                                    <div>
+                                        <h3 class="font-medium text-white">Robert Johnson</h3>
+                                        <p class="text-xs text-slate-400">P003 • Male • 67 years</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="flex -space-x-1">
+                                        <span class="w-6 h-6 bg-red-500/30 text-[10px] text-red-300 rounded-full flex items-center justify-center border border-slate-700">B</span>
+                                        <span class="w-6 h-6 bg-blue-500/30 text-[10px] text-blue-300 rounded-full flex items-center justify-center border border-slate-700">C</span>
+                                        <span class="w-6 h-6 bg-purple-500/30 text-[10px] text-purple-300 rounded-full flex items-center justify-center border border-slate-700">E</span>
+                                        <span class="w-6 h-6 bg-slate-700 text-[10px] text-slate-300 rounded-full flex items-center justify-center">+2</span>
+                                    </div>
+                                    <button class="text-slate-400 hover:text-white">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- More patient rows... -->
+                        <div class="bg-slate-800/30 rounded-xl p-4 hover:bg-slate-800/50 transition-all cursor-pointer">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center text-white font-semibold">
+                                        MW
+                                    </div>
+                                    <div>
+                                        <h3 class="font-medium text-white">Mary Wilson</h3>
+                                        <p class="text-xs text-slate-400">P004 • Female • 28 years</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="flex -space-x-1">
+                                        <span class="w-6 h-6 bg-green-500/30 text-[10px] text-green-300 rounded-full flex items-center justify-center border border-slate-700">I</span>
+                                    </div>
+                                    <button class="text-slate-400 hover:text-white">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 flex items-center justify-center">
+                        <button class="px-4 py-2 text-sm text-blue-400 hover:text-blue-300 transition-colors">
+                            Load More Patients
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Sidebar -->
+                <div class="space-y-6">
+                    <!-- Quick Actions -->
+                    <div class="glass rounded-2xl p-6">
+                        <h2 class="text-lg font-semibold text-white mb-4">Quick Actions</h2>
+                        <div class="space-y-3">
+                            <button class="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium hover:from-blue-700 hover:to-purple-700 transition-all text-left flex items-center justify-between">
+                                <span>Add Patient</span>
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                            </button>
+                            <button class="w-full px-4 py-3 bg-slate-800/50 text-white rounded-xl font-medium hover:bg-slate-800 transition-all text-left flex items-center justify-between">
+                                <span>Generate Report</span>
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v1a1 1 0 001 1h4a1 1 0 001-1v-1m3-2V8a2 2 0 00-2-2H8a2 2 0 00-2 2v8m5 0h2m2 0h2m2 0h2m-6-3h.01M9 11h.01"></path>
+                                </svg>
+                            </button>
+                            <button class="w-full px-4 py-3 bg-slate-800/50 text-white rounded-xl font-medium hover:bg-slate-800 transition-all text-left flex items-center justify-between">
+                                <span>Export Data</span>
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Disease Distribution -->
+                    <div class="glass rounded-2xl p-6">
+                        <h2 class="text-lg font-semibold text-white mb-4">Disease Distribution</h2>
+                        <canvas id="diseaseChart"></canvas>
+                        <div class="mt-4 grid grid-cols-2 gap-2">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                <span class="text-xs text-slate-400">Cardio</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
+                                <span class="text-xs text-slate-400">Neuro</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <span class="text-xs text-slate-400">Endo</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-orange-500 rounded-full"></div>
+                                <span class="text-xs text-slate-400">Others</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Age Groups -->
+                    <div class="glass rounded-2xl p-6">
+                        <h2 class="text-lg font-semibold text-white mb-4">Age Groups</h2>
+                        <div class="space-y-3">
+                            <div>
+                                <div class="flex items-center justify-between text-sm mb-1">
+                                    <span class="text-slate-400">0-17</span>
+                                    <span class="text-white">120</span>
+                                </div>
+                                <div class="w-full bg-slate-700/50 rounded-full h-2">
+                                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full" style="width: 10%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between text-sm mb-1">
+                                    <span class="text-slate-400">18-29</span>
+                                    <span class="text-white">190</span>
+                                </div>
+                                <div class="w-full bg-slate-700/50 rounded-full h-2">
+                                    <div class="bg-gradient-to-r from-purple-500 to-purple-600 h-2 rounded-full" style="width: 15%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between text-sm mb-1">
+                                    <span class="text-slate-400">30-49</span>
+                                    <span class="text-white">510</span>
+                                </div>
+                                <div class="w-full bg-slate-700/50 rounded-full h-2">
+                                    <div class="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full" style="width: 41%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between text-sm mb-1">
+                                    <span class="text-slate-400">50-69</span>
+                                    <span class="text-white">400</span>
+                                </div>
+                                <div class="w-full bg-slate-700/50 rounded-full h-2">
+                                    <div class="bg-gradient-to-r from-orange-500 to-orange-600 h-2 rounded-full" style="width: 32%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between text-sm mb-1">
+                                    <span class="text-slate-400">70+</span>
+                                    <span class="text-white">214</span>
+                                </div>
+                                <div class="w-full bg-slate-700/50 rounded-full h-2">
+                                    <div class="bg-gradient-to-r from-red-500 to-red-600 h-2 rounded-full" style="width: 17%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                <div class="glass rounded-2xl p-6">
+                    <h2 class="text-lg font-semibold text-white mb-4">Monthly Trends</h2>
+                    <canvas id="trendsChart"></canvas>
+                </div>
+                <div class="glass rounded-2xl p-6">
+                    <h2 class="text-lg font-semibold text-white mb-4">Gender Distribution</h2>
+                    <canvas id="genderChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Patient Detail Modal (Hidden by default) -->
+    <div id="patientModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="glass rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+            <div class="p-6 border-b border-slate-700/50">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Patient Details</h2>
+                        <p class="text-sm text-slate-400 mt-1">Complete medical record</p>
+                    </div>
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6 overflow-y-auto max-h-[calc(90vh-100px)]">
+                <!-- Patient detail content would go here -->
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Basic Information</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-xs text-slate-500">Name</label>
+                                <input type="text" value="John Doe" class="w-full mt-1 px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-white">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-500">Age</label>
+                                <input type="number" value="45" class="w-full mt-1 px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-white">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-500">Gender</label>
+                                <select class="w-full mt-1 px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-white">
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Medical Conditions</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="flex items-center space-x-2 p-2 bg-slate-800/30 rounded-lg cursor-pointer hover:bg-slate-800/50">
+                                <input type="checkbox" class="toggle-checkbox">
+                                <span class="text-sm text-slate-300">Blood</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-2 bg-slate-800/30 rounded-lg cursor-pointer hover:bg-slate-800/50">
+                                <input type="checkbox" checked class="toggle-checkbox">
+                                <span class="text-sm text-slate-300">Cardiovascular</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-2 bg-slate-800/30 rounded-lg cursor-pointer hover:bg-slate-800/50">
+                                <input type="checkbox" class="toggle-checkbox">
+                                <span class="text-sm text-slate-300">Endocrine</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-2 bg-slate-800/30 rounded-lg cursor-pointer hover:bg-slate-800/50">
+                                <input type="checkbox" class="toggle-checkbox">
+                                <span class="text-sm text-slate-300">ENT</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-2 bg-slate-800/30 rounded-lg cursor-pointer hover:bg-slate-800/50">
+                                <input type="checkbox" checked class="toggle-checkbox">
+                                <span class="text-sm text-slate-300">Gastro</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-2 bg-slate-800/30 rounded-lg cursor-pointer hover:bg-slate-800/50">
+                                <input type="checkbox" class="toggle-checkbox">
+                                <span class="text-sm text-slate-300">Infectious</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize charts when page loads
+        window.onload = function() {
+            initCharts();
+        }
+
+        function closeModal() {
+            document.getElementById('patientModal').classList.add('hidden');
+        }
+
+        function initCharts() {
+            // Disease Distribution Chart
+            const diseaseCtx = document.getElementById('diseaseChart').getContext('2d');
+            new Chart(diseaseCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Cardiovascular', 'Endocrine', 'Neurology', 'Others'],
+                    datasets: [{
+                        data: [35, 25, 20, 20],
+                        backgroundColor: [
+                            '#3B82F6',
+                            '#A855F7',
+                            '#10B981',
+                            '#F97316'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Monthly Trends Chart
+            const trendsCtx = document.getElementById('trendsChart').getContext('2d');
+            new Chart(trendsCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'New Patients',
+                        data: [65, 78, 90, 81, 86, 95],
+                        borderColor: '#3B82F6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Recovered',
+                        data: [45, 52, 70, 65, 72, 80],
+                        borderColor: '#10B981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: '#94A3B8',
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)'
+                            },
+                            ticks: {
+                                color: '#94A3B8'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)'
+                            },
+                            ticks: {
+                                color: '#94A3B8'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gender Distribution Chart
+            const genderCtx = document.getElementById('genderChart').getContext('2d');
+            new Chart(genderCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Male', 'Female', 'Other'],
+                    datasets: [{
+                        label: 'Patients',
+                        data: [580, 620, 34],
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(168, 85, 247, 0.8)',
+                            'rgba(148, 163, 184, 0.8)'
+                        ],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#94A3B8'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)'
+                            },
+                            ticks: {
+                                color: '#94A3B8'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
