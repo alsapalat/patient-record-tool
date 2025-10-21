@@ -14,23 +14,30 @@
   border: 1px solid hsl(var(--border));
   border-top: 1px solid hsl(var(--border));
   white-space: nowrap;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
 }
 
 .patient-grid .header.disease-header {
   padding: 0;
   height: 120px;
-  vertical-align: bottom;
+  overflow: hidden;
 }
 
 .patient-grid .header.disease-header > div {
-  transform: rotate(-90deg);
+  position: absolute;
   width: 120px;
-  height: 100%;
+  height: 50px;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%) translateY(-45px) rotate(-90deg);
+  transform-origin: center center;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding-left: 8px;
-  font-size: 13px;
+  font-size: 12px;
+  white-space: nowrap;
 }
 
 .patient-grid .header.sticky-name {
