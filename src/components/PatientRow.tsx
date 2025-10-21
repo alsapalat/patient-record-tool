@@ -28,6 +28,9 @@ export const PatientRow = memo(({
 
   return (
     <div className={`grid-row ${rowBg}`} style={{ display: 'contents' }}>
+      <div className={`cell sticky-index ${stickyBg}`}>
+        <span className="text-sm font-medium text-muted-foreground">{rowIndex + 1}</span>
+      </div>
       <div className={`cell sticky-name ${stickyBg}`}>
         <span className="text-sm">{row.Name || ''}</span>
       </div>

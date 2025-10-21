@@ -31,7 +31,7 @@
   height: 50px;
   left: 50%;
   bottom: 0;
-  transform: translateX(-50%) translateY(-45px) rotate(-90deg);
+  transform: translateX(-40%) translateY(-45px) rotate(-70deg);
   transform-origin: center center;
   display: flex;
   align-items: center;
@@ -40,15 +40,21 @@
   white-space: nowrap;
 }
 
-.patient-grid .header.sticky-name {
+.patient-grid .header.sticky-index {
   left: 0;
+  z-index: 20;
+  border-left: 1px solid hsl(var(--border));
+}
+
+.patient-grid .header.sticky-name {
+  left: 60px;
   z-index: 20;
   text-align: left;
   border-left: 1px solid hsl(var(--border));
 }
 
 .patient-grid .header.sticky-age {
-  left: 150px;
+  left: 210px;
   z-index: 20;
 }
 
@@ -67,9 +73,16 @@
   min-height: 40px;
 }
 
-.patient-grid .cell.sticky-name {
+.patient-grid .cell.sticky-index {
   position: sticky;
   left: 0;
+  z-index: 5;
+  border-left: 1px solid hsl(var(--border));
+}
+
+.patient-grid .cell.sticky-name {
+  position: sticky;
+  left: 60px;
   z-index: 5;
   justify-content: flex-start;
   border-left: 1px solid hsl(var(--border));
@@ -77,6 +90,6 @@
 
 .patient-grid .cell.sticky-age {
   position: sticky;
-  left: 150px;
+  left: 210px;
   z-index: 5;
 }

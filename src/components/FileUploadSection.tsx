@@ -1,5 +1,5 @@
 import { type ChangeEvent } from 'react'
-import { Upload, Sparkles } from 'lucide-react'
+import { Upload, Download, FileDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { SummaryDialog } from '@/components/SummaryDialog'
@@ -11,9 +11,11 @@ interface FileUploadSectionProps {
   onFileUpload: (event: ChangeEvent<HTMLInputElement>) => void
   onRandomAutofill: () => void
   onClearData: () => void
+  onExportXLSX: () => void
+  onDownloadTemplate: () => void
 }
 
-export const FileUploadSection = ({ csvData, onFileUpload, onRandomAutofill, onClearData }: FileUploadSectionProps) => {
+export const FileUploadSection = ({ csvData, onFileUpload, onClearData, onExportXLSX, onDownloadTemplate }: FileUploadSectionProps) => {
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 py-4">
@@ -31,29 +33,38 @@ export const FileUploadSection = ({ csvData, onFileUpload, onRandomAutofill, onC
               </span>
             )}
 
-            <Input
-              id="csv-upload"
-              type="file"
-              accept=".csv"
-              onChange={onFileUpload}
-              className="hidden"
-            />
-            <label htmlFor="csv-upload">
-              <Button variant={csvData.length > 0 ? "outline" : "default"} size="sm" className="cursor-pointer" asChild>
-                <span>
-                  <Upload className="mr-2 h-4 w-4" />
-                  Upload CSV
-                </span>
-              </Button>
-            </label>
-
-            {csvData.length > 0 && (
+            {/* Show only upload and download template when no data */}
+            {csvData.length === 0 ? (
               <>
-                <Button variant="outline" size="sm" onClick={onRandomAutofill}>
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  Random Autofill
+                <Input
+                  id="csv-upload"
+                  type="file"
+                  accept=".csv,.xlsx,.xls"
+                  onChange={onFileUpload}
+                  className="hidden"
+                />
+                <label htmlFor="csv-upload">
+                  <Button variant="default" size="sm" className="cursor-pointer" asChild>
+                    <span>
+                      <Upload className="mr-2 h-4 w-4" />
+                      Upload File
+                    </span>
+                  </Button>
+                </label>
+
+                <Button variant="outline" size="sm" onClick={onDownloadTemplate}>
+                  <FileDown className="mr-2 h-4 w-4" />
+                  Download Template
                 </Button>
+              </>
+            ) : (
+              <>
+                {/* Show summary, export, and clear when data is loaded */}
                 <SummaryDialog csvData={csvData} />
+                <Button variant="outline" size="sm" onClick={onExportXLSX}>
+                  <Download className="mr-2 h-4 w-4" />
+                  Export XLSX
+                </Button>
                 <ClearDataDialog onClear={onClearData} />
               </>
             )}

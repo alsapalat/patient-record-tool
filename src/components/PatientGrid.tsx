@@ -26,11 +26,12 @@ export const PatientGrid = ({ csvData, onAgeChange, onDateChange, onDiseaseToggl
             className="patient-grid"
             style={{
               display: 'grid',
-              gridTemplateColumns: `150px 100px 150px repeat(${DISEASES.length}, 50px)`,
+              gridTemplateColumns: `60px 150px 100px 150px repeat(${DISEASES.length}, 50px)`,
               minWidth: 'max-content',
             }}
           >
             {/* Header Row */}
+            <div className="header sticky-index bg-white">#</div>
             <div className="header sticky-name bg-white">Name</div>
             <div className="header sticky-age bg-white">Age</div>
             <div className="header bg-white">Date</div>
