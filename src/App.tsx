@@ -5,6 +5,7 @@ import { EmptyState } from '@/components/EmptyState'
 import { DISEASES } from '@/constants/diseases'
 import { usePatientStore, type PatientRow } from '@/store/patientStore'
 import { parseDateFromCSV } from '@/utils/dateParser'
+import { parseCSVLine, removeBOM } from '@/utils/csvParser'
 import * as XLSX from 'xlsx'
 import './App.css'
 
@@ -34,24 +35,33 @@ function App() {
 
         if (jsonData.length === 0) return
 
-        headerLine = jsonData[0]
-        dataRows = jsonData.slice(1)
+        // Trim all header values
+        headerLine = jsonData[0].map(h => (h?.toString() || '').trim())
+        // Trim all cell values in data rows
+        dataRows = jsonData.slice(1).map(row =>
+          row.map(cell => (cell?.toString() || '').trim())
+        )
       } else {
         // Handle CSV files
-        const text = new TextDecoder().decode(arrayBuffer as ArrayBuffer)
+        let text = new TextDecoder().decode(arrayBuffer as ArrayBuffer)
+
+        // Remove BOM if present
+        text = removeBOM(text)
+
         const lines = text.split('\n').filter(line => line.trim())
 
         if (lines.length === 0) return
 
-        headerLine = lines[0].split(',')
-        dataRows = lines.slice(1).map(line => line.split(','))
+        // Use parseCSVLine to properly handle quoted fields with commas
+        headerLine = parseCSVLine(lines[0])
+        dataRows = lines.slice(1).map(line => parseCSVLine(line))
       }
 
       const data = dataRows.map((values) => {
         const row: PatientRow = { age: '', date: '', gender: '', diseases: [] }
 
         headerLine.forEach((header, i) => {
-          const value = values[i]?.toString() || ''
+          const value = (values[i]?.toString() || '').trim()
 
           // Check if this is the Age column (from exported data)
           if (header.toLowerCase() === 'age') {

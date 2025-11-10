@@ -2,33 +2,59 @@
  * Parses a CSV line that may contain quoted fields with commas
  * Handles:
  * - Quoted fields: "field, with comma"
+ * - Escaped quoted fields: \"field, with comma\"
  * - Unquoted fields: simple field
  * - Mixed: simple,"quoted, field",another
+ * - Trims whitespace and removes surrounding quotes
  */
 export const parseCSVLine = (line: string): string[] => {
   const result: string[] = []
   let current = ''
   let inQuotes = false
+  let prevChar = ''
 
   for (let i = 0; i < line.length; i++) {
     const char = line[i]
 
-    if (char === '"') {
-      // Toggle quote state
+    if (char === '"' && prevChar !== '\\') {
+      // Toggle quote state (but only if not escaped)
       inQuotes = !inQuotes
     } else if (char === ',' && !inQuotes) {
-      // End of field
-      result.push(current.trim())
+      // End of field - clean and add
+      result.push(cleanCSVValue(current))
       current = ''
-    } else {
+    } else if (!(char === '\\' && i + 1 < line.length && line[i + 1] === '"')) {
+      // Add character unless it's a backslash before a quote
       current += char
     }
+
+    prevChar = char
   }
 
   // Add the last field
-  result.push(current.trim())
+  result.push(cleanCSVValue(current))
 
   return result
+}
+
+/**
+ * Cleans a CSV field value:
+ * - Trims whitespace
+ * - Removes surrounding quotes if present
+ * - Handles escaped quotes \" -> "
+ */
+const cleanCSVValue = (value: string): string => {
+  let cleaned = value.trim()
+
+  // Remove surrounding quotes if present
+  if (cleaned.startsWith('"') && cleaned.endsWith('"')) {
+    cleaned = cleaned.slice(1, -1)
+  }
+
+  // Handle any remaining escaped quotes
+  cleaned = cleaned.replace(/\\"/g, '"')
+
+  return cleaned.trim()
 }
 
 /**
