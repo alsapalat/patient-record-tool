@@ -7,10 +7,11 @@ interface PatientGridProps {
   csvData: PatientRowType[]
   onAgeChange: (index: number, value: string) => void
   onDateChange: (index: number, value: string) => void
+  onGenderChange: (index: number, value: 'M' | 'F' | '') => void
   onDiseaseToggle: (rowIndex: number, disease: string) => void
 }
 
-export const PatientGrid = ({ csvData, onAgeChange, onDateChange, onDiseaseToggle }: PatientGridProps) => {
+export const PatientGrid = ({ csvData, onAgeChange, onDateChange, onGenderChange, onDiseaseToggle }: PatientGridProps) => {
   return (
     <Card>
       <CardContent className="p-0">
@@ -26,7 +27,7 @@ export const PatientGrid = ({ csvData, onAgeChange, onDateChange, onDiseaseToggl
             className="patient-grid"
             style={{
               display: 'grid',
-              gridTemplateColumns: `60px 150px 100px 150px repeat(${DISEASES.length}, 50px)`,
+              gridTemplateColumns: `60px 150px 100px 150px 100px repeat(${DISEASES.length}, 50px)`,
               minWidth: 'max-content',
             }}
           >
@@ -35,6 +36,7 @@ export const PatientGrid = ({ csvData, onAgeChange, onDateChange, onDiseaseToggl
             <div className="header sticky-name bg-white">Name</div>
             <div className="header sticky-age bg-white">Age</div>
             <div className="header bg-white">Date</div>
+            <div className="header bg-white">Gender</div>
             {DISEASES.map((disease) => (
               <div key={disease} className="header disease-header bg-white">
                 <div>{getDiseaseShortName(disease)}</div>
@@ -49,6 +51,7 @@ export const PatientGrid = ({ csvData, onAgeChange, onDateChange, onDiseaseToggl
                 rowIndex={rowIndex}
                 onAgeChange={onAgeChange}
                 onDateChange={onDateChange}
+                onGenderChange={onGenderChange}
                 onDiseaseToggle={onDiseaseToggle}
               />
             ))}

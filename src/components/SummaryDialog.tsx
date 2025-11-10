@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import { calculateSummaryStats } from '@/utils/statistics'
+import { calculateSummaryStats, calculatePediatricStats, calculateAdultStats } from '@/utils/statistics'
 import type { PatientRow } from '@/store/patientStore'
 
 interface SummaryDialogProps {
@@ -19,6 +19,8 @@ interface SummaryDialogProps {
 
 export const SummaryDialog = ({ csvData }: SummaryDialogProps) => {
   const stats = calculateSummaryStats(csvData)
+  const pediatricStats = calculatePediatricStats(csvData)
+  const adultStats = calculateAdultStats(csvData)
 
   return (
     <Dialog>
@@ -36,12 +38,12 @@ export const SummaryDialog = ({ csvData }: SummaryDialogProps) => {
           </DialogDescription>
         </DialogHeader>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-          {/* Age Group Statistics */}
+          {/* Pediatric Age Group Statistics */}
           <div>
-            <h3 className="text-lg font-semibold mb-3">Age Groups</h3>
+            <h3 className="text-lg font-semibold mb-3">Pediatric Age Groups (0-17)</h3>
             <div className="border rounded-md p-4">
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={stats.ageGroups}>
+                <BarChart data={pediatricStats}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="ageGroup" />
                   <YAxis />
@@ -55,18 +57,23 @@ export const SummaryDialog = ({ csvData }: SummaryDialogProps) => {
                   <Bar dataKey="count" fill="#8884d8" name="Count" />
                 </BarChart>
               </ResponsiveContainer>
+              {pediatricStats.length === 0 && (
+                <div className="text-center text-sm text-muted-foreground py-8">
+                  No pediatric patients found
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Disease Statistics */}
+          {/* Adult Age Group Statistics */}
           <div>
-            <h3 className="text-lg font-semibold mb-3">Diseases</h3>
+            <h3 className="text-lg font-semibold mb-3">Adult Age Groups (18+)</h3>
             <div className="border rounded-md p-4">
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={stats.diseases} layout="horizontal">
+                <BarChart data={adultStats}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" />
-                  <YAxis dataKey="disease" type="category" width={150} fontSize={12} />
+                  <XAxis dataKey="ageGroup" />
+                  <YAxis />
                   <Tooltip
                     formatter={(value: number, name: string) => {
                       if (name === 'count') return [value, 'Count'];
@@ -77,7 +84,34 @@ export const SummaryDialog = ({ csvData }: SummaryDialogProps) => {
                   <Bar dataKey="count" fill="#82ca9d" name="Count" />
                 </BarChart>
               </ResponsiveContainer>
+              {adultStats.length === 0 && (
+                <div className="text-center text-sm text-muted-foreground py-8">
+                  No adult patients found
+                </div>
+              )}
             </div>
+          </div>
+        </div>
+
+        {/* Disease Statistics */}
+        <div className="mt-6">
+          <h3 className="text-lg font-semibold mb-3">Disease Distribution</h3>
+          <div className="border rounded-md p-4">
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={stats.diseases} layout="horizontal">
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis type="number" />
+                <YAxis dataKey="disease" type="category" width={150} fontSize={12} />
+                <Tooltip
+                  formatter={(value: number, name: string) => {
+                    if (name === 'count') return [value, 'Count'];
+                    return [value, name];
+                  }}
+                />
+                <Legend />
+                <Bar dataKey="count" fill="#f59e0b" name="Count" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
 

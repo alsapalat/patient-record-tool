@@ -15,7 +15,9 @@ export const DISEASES = [
   'Surgery',
   'Trauma',
   'Urology',
-  'Psych'
+  'Psych',
+  'Primary Care',
+  'Hepa'
 ] as const
 
 export type Disease = typeof DISEASES[number]
@@ -37,7 +39,9 @@ export const DISEASE_SHORTCUTS: Record<string, string> = {
   'Surgery': 'Surgery',
   'Trauma': 'Trauma',
   'Urology': 'Urology',
-  'Psych': 'Psych'
+  'Psych': 'Psych',
+  'Primary Care': 'Primary',
+  'Hepa': 'Hepa'
 }
 
 export const getDiseaseShortName = (disease: string): string => {

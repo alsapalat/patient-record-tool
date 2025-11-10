@@ -48,7 +48,7 @@ function App() {
       }
 
       const data = dataRows.map((values) => {
-        const row: PatientRow = { age: '', date: '', diseases: [] }
+        const row: PatientRow = { age: '', date: '', gender: '', diseases: [] }
 
         headerLine.forEach((header, i) => {
           const value = values[i]?.toString() || ''
@@ -62,6 +62,14 @@ function App() {
           if (header.toLowerCase().includes('date') || header.toLowerCase().includes('time')) {
             // Parse and set to the date field
             row.date = parseDateFromCSV(value)
+          }
+
+          // Check if this is the Gender column (from exported data)
+          if (header.toLowerCase() === 'gender') {
+            const genderValue = value.toUpperCase()
+            if (genderValue === 'M' || genderValue === 'F') {
+              row.gender = genderValue
+            }
           }
 
           // Check if this is a disease column (from exported data)
@@ -112,6 +120,19 @@ function App() {
     })
   }, [])
 
+  const handleGenderChange = useCallback((index: number, value: 'M' | 'F' | '') => {
+    // Update local state immediately for fast UI
+    setCsvData((prevData) => {
+      const newData = [...prevData]
+      newData[index] = { ...newData[index], gender: value }
+
+      // Sync to store in background (no subscription, no re-render)
+      usePatientStore.setState({ csvData: newData })
+
+      return newData
+    })
+  }, [])
+
   const handleDiseaseToggle = useCallback((rowIndex: number, disease: string) => {
     // Update local state immediately for fast UI
     setCsvData((prevData) => {
@@ -139,10 +160,12 @@ function App() {
         const numDiseases = Math.floor(Math.random() * 4)
         const shuffledDiseases = [...DISEASES].sort(() => Math.random() - 0.5)
         const randomDiseases = shuffledDiseases.slice(0, numDiseases)
+        const randomGender: 'M' | 'F' = Math.random() > 0.5 ? 'M' : 'F'
 
         return {
           ...row,
           age: randomAge.toString(),
+          gender: randomGender,
           diseases: randomDiseases,
         }
       })
@@ -167,14 +190,15 @@ function App() {
 
     // Prepare data for export with individual disease columns
     const exportData = csvData.map((row) => {
-      const { diseases, age, date, ...originalFields } = row
+      const { diseases, age, date, gender, ...originalFields } = row
 
       // Create an object with all original CSV fields first
       const exportRow: Record<string, string> = { ...originalFields as Record<string, string> }
 
-      // Add age and date columns (these are the updated/annotated values)
+      // Add age, date, and gender columns (these are the updated/annotated values)
       exportRow['Age'] = age || ''
       exportRow['Date'] = date || ''
+      exportRow['Gender'] = gender || ''
 
       // Add individual columns for each disease
       DISEASES.forEach((disease) => {
@@ -226,6 +250,7 @@ function App() {
             csvData={csvData}
             onAgeChange={handleAgeChange}
             onDateChange={handleDateChange}
+            onGenderChange={handleGenderChange}
             onDiseaseToggle={handleDiseaseToggle}
           />
         ) : (

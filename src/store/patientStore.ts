@@ -5,6 +5,7 @@ export type PatientRow = {
   [key: string]: string | string[] | undefined
   age?: string
   date?: string
+  gender?: 'M' | 'F' | ''
   diseases?: string[]
 }
 

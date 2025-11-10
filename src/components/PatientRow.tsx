@@ -1,6 +1,7 @@
 import { memo } from 'react'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
+import { InputGender, type Gender } from '@/components/InputGender'
 import { DISEASES } from '@/constants/diseases'
 import type { PatientRow as PatientRowType } from '@/store/patientStore'
 
@@ -9,6 +10,7 @@ interface PatientRowProps {
   rowIndex: number
   onAgeChange: (index: number, value: string) => void
   onDateChange: (index: number, value: string) => void
+  onGenderChange: (index: number, value: Gender) => void
   onDiseaseToggle: (rowIndex: number, disease: string) => void
 }
 
@@ -17,6 +19,7 @@ export const PatientRow = memo(({
   rowIndex,
   onAgeChange,
   onDateChange,
+  onGenderChange,
   onDiseaseToggle,
 }: PatientRowProps) => {
   const hasNoAge = !row.age || row.age === ''
@@ -50,6 +53,12 @@ export const PatientRow = memo(({
           onChange={(e) => onDateChange(rowIndex, e.target.value)}
           className="w-32 h-8"
           placeholder="Date"
+        />
+      </div>
+      <div className={`cell ${rowBg}`}>
+        <InputGender
+          value={row.gender || ''}
+          onChange={(value) => onGenderChange(rowIndex, value)}
         />
       </div>
       {DISEASES.map((disease) => {
