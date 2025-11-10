@@ -1,5 +1,5 @@
 import { type ChangeEvent } from 'react'
-import { Upload, Download, FileDown } from 'lucide-react'
+import { Upload, Download, FileDown, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { SummaryDialog } from '@/components/SummaryDialog'
@@ -15,7 +15,7 @@ interface FileUploadSectionProps {
   onDownloadTemplate: () => void
 }
 
-export const FileUploadSection = ({ csvData, onFileUpload, onClearData, onExportXLSX, onDownloadTemplate }: FileUploadSectionProps) => {
+export const FileUploadSection = ({ csvData, onFileUpload, onRandomAutofill, onClearData, onExportXLSX, onDownloadTemplate }: FileUploadSectionProps) => {
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 py-4">
@@ -59,7 +59,11 @@ export const FileUploadSection = ({ csvData, onFileUpload, onClearData, onExport
               </>
             ) : (
               <>
-                {/* Show summary, export, and clear when data is loaded */}
+                {/* Show autofill, summary, export, and clear when data is loaded */}
+                <Button variant="secondary" size="sm" onClick={onRandomAutofill}>
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Autofill All
+                </Button>
                 <SummaryDialog csvData={csvData} />
                 <Button variant="outline" size="sm" onClick={onExportXLSX}>
                   <Download className="mr-2 h-4 w-4" />

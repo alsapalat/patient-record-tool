@@ -38,18 +38,34 @@ export const getAdultAgeGroup = (age: string): string => {
 }
 
 export const calculateSummaryStats = (csvData: PatientRow[]): { ageGroups: AgeGroupStats[], diseases: DiseaseStats[] } => {
-  const ageGroupCounts: Record<string, number> = {}
-  const diseaseCounts: Record<string, number> = {}
+  const ageGroupCounts: Record<string, { total: number; male: number; female: number }> = {}
+  const diseaseCounts: Record<string, { total: number; male: number; female: number }> = {}
   const diseaseAgeBreakdown: Record<string, Record<string, number>> = {}
 
   // Count age groups and diseases
   csvData.forEach(row => {
     const ageGroup = getAgeGroup(row.age || '')
-    ageGroupCounts[ageGroup] = (ageGroupCounts[ageGroup] || 0) + 1
+    if (!ageGroupCounts[ageGroup]) {
+      ageGroupCounts[ageGroup] = { total: 0, male: 0, female: 0 }
+    }
+    ageGroupCounts[ageGroup].total += 1
+    if (row.gender === 'M') {
+      ageGroupCounts[ageGroup].male += 1
+    } else if (row.gender === 'F') {
+      ageGroupCounts[ageGroup].female += 1
+    }
 
     const diseases = row.diseases || []
     diseases.forEach(disease => {
-      diseaseCounts[disease] = (diseaseCounts[disease] || 0) + 1
+      if (!diseaseCounts[disease]) {
+        diseaseCounts[disease] = { total: 0, male: 0, female: 0 }
+      }
+      diseaseCounts[disease].total += 1
+      if (row.gender === 'M') {
+        diseaseCounts[disease].male += 1
+      } else if (row.gender === 'F') {
+        diseaseCounts[disease].female += 1
+      }
 
       // Track age breakdown for each disease
       if (!diseaseAgeBreakdown[disease]) {
@@ -63,18 +79,22 @@ export const calculateSummaryStats = (csvData: PatientRow[]): { ageGroups: AgeGr
 
   // Convert to array format with percentages
   const ageGroups: AgeGroupStats[] = Object.entries(ageGroupCounts)
-    .map(([ageGroup, count]) => ({
+    .map(([ageGroup, counts]) => ({
       ageGroup,
-      count,
-      percentage: totalRecords > 0 ? ((count / totalRecords) * 100).toFixed(1) : '0'
+      count: counts.total,
+      male: counts.male,
+      female: counts.female,
+      percentage: totalRecords > 0 ? ((counts.total / totalRecords) * 100).toFixed(1) : '0'
     }))
     .sort((a, b) => a.ageGroup.localeCompare(b.ageGroup))
 
   const diseases: DiseaseStats[] = Object.entries(diseaseCounts)
-    .map(([disease, count]) => ({
+    .map(([disease, counts]) => ({
       disease,
-      count,
-      percentage: totalRecords > 0 ? ((count / totalRecords) * 100).toFixed(1) : '0',
+      count: counts.total,
+      male: counts.male,
+      female: counts.female,
+      percentage: totalRecords > 0 ? ((counts.total / totalRecords) * 100).toFixed(1) : '0',
       ageBreakdown: Object.entries(diseaseAgeBreakdown[disease] || {})
         .map(([ageGroup, ageCount]) => ({ ageGroup, count: ageCount }))
         .sort((a, b) => a.ageGroup.localeCompare(b.ageGroup))
@@ -85,7 +105,7 @@ export const calculateSummaryStats = (csvData: PatientRow[]): { ageGroups: AgeGr
 }
 
 export const calculatePediatricStats = (csvData: PatientRow[]): AgeGroupStats[] => {
-  const ageGroupCounts: Record<string, number> = {}
+  const ageGroupCounts: Record<string, { total: number; male: number; female: number }> = {}
 
   // Filter pediatric patients (0-17) and count by age group
   csvData.forEach(row => {
@@ -93,24 +113,34 @@ export const calculatePediatricStats = (csvData: PatientRow[]): AgeGroupStats[] 
     if (!isNaN(ageNum) && ageNum < 18) {
       const ageGroup = getPediatricAgeGroup(row.age || '')
       if (ageGroup !== 'N/A') {
-        ageGroupCounts[ageGroup] = (ageGroupCounts[ageGroup] || 0) + 1
+        if (!ageGroupCounts[ageGroup]) {
+          ageGroupCounts[ageGroup] = { total: 0, male: 0, female: 0 }
+        }
+        ageGroupCounts[ageGroup].total += 1
+        if (row.gender === 'M') {
+          ageGroupCounts[ageGroup].male += 1
+        } else if (row.gender === 'F') {
+          ageGroupCounts[ageGroup].female += 1
+        }
       }
     }
   })
 
-  const totalPediatric = Object.values(ageGroupCounts).reduce((sum, count) => sum + count, 0)
+  const totalPediatric = Object.values(ageGroupCounts).reduce((sum, counts) => sum + counts.total, 0)
 
   return Object.entries(ageGroupCounts)
-    .map(([ageGroup, count]) => ({
+    .map(([ageGroup, counts]) => ({
       ageGroup,
-      count,
-      percentage: totalPediatric > 0 ? ((count / totalPediatric) * 100).toFixed(1) : '0'
+      count: counts.total,
+      male: counts.male,
+      female: counts.female,
+      percentage: totalPediatric > 0 ? ((counts.total / totalPediatric) * 100).toFixed(1) : '0'
     }))
     .sort((a, b) => a.ageGroup.localeCompare(b.ageGroup))
 }
 
 export const calculateAdultStats = (csvData: PatientRow[]): AgeGroupStats[] => {
-  const ageGroupCounts: Record<string, number> = {}
+  const ageGroupCounts: Record<string, { total: number; male: number; female: number }> = {}
 
   // Filter adult patients (18+) and count by age group
   csvData.forEach(row => {
@@ -118,18 +148,28 @@ export const calculateAdultStats = (csvData: PatientRow[]): AgeGroupStats[] => {
     if (!isNaN(ageNum) && ageNum >= 18) {
       const ageGroup = getAdultAgeGroup(row.age || '')
       if (ageGroup !== 'N/A') {
-        ageGroupCounts[ageGroup] = (ageGroupCounts[ageGroup] || 0) + 1
+        if (!ageGroupCounts[ageGroup]) {
+          ageGroupCounts[ageGroup] = { total: 0, male: 0, female: 0 }
+        }
+        ageGroupCounts[ageGroup].total += 1
+        if (row.gender === 'M') {
+          ageGroupCounts[ageGroup].male += 1
+        } else if (row.gender === 'F') {
+          ageGroupCounts[ageGroup].female += 1
+        }
       }
     }
   })
 
-  const totalAdults = Object.values(ageGroupCounts).reduce((sum, count) => sum + count, 0)
+  const totalAdults = Object.values(ageGroupCounts).reduce((sum, counts) => sum + counts.total, 0)
 
   return Object.entries(ageGroupCounts)
-    .map(([ageGroup, count]) => ({
+    .map(([ageGroup, counts]) => ({
       ageGroup,
-      count,
-      percentage: totalAdults > 0 ? ((count / totalAdults) * 100).toFixed(1) : '0'
+      count: counts.total,
+      male: counts.male,
+      female: counts.female,
+      percentage: totalAdults > 0 ? ((counts.total / totalAdults) * 100).toFixed(1) : '0'
     }))
     .sort((a, b) => a.ageGroup.localeCompare(b.ageGroup))
 }

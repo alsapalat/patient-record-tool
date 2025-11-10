@@ -30,7 +30,7 @@ export const SummaryDialog = ({ csvData }: SummaryDialogProps) => {
           Generate Summary
         </Button>
       </DialogTrigger>
-      <DialogContent className="!max-w-4xl max-h-[80vh] overflow-y-auto bg-white">
+      <DialogContent className="!max-w-7xl max-h-[80vh] overflow-y-auto bg-white">
         <DialogHeader>
           <DialogTitle>Statistical Summary</DialogTitle>
           <DialogDescription>
@@ -47,14 +47,10 @@ export const SummaryDialog = ({ csvData }: SummaryDialogProps) => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="ageGroup" />
                   <YAxis />
-                  <Tooltip
-                    formatter={(value: number, name: string) => {
-                      if (name === 'count') return [value, 'Count'];
-                      return [value, name];
-                    }}
-                  />
+                  <Tooltip />
                   <Legend />
-                  <Bar dataKey="count" fill="#8884d8" name="Count" />
+                  <Bar dataKey="male" stackId="a" fill="#ef4444" name="Male" />
+                  <Bar dataKey="female" stackId="a" fill="#3b82f6" name="Female" />
                 </BarChart>
               </ResponsiveContainer>
               {pediatricStats.length === 0 && (
@@ -74,14 +70,10 @@ export const SummaryDialog = ({ csvData }: SummaryDialogProps) => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="ageGroup" />
                   <YAxis />
-                  <Tooltip
-                    formatter={(value: number, name: string) => {
-                      if (name === 'count') return [value, 'Count'];
-                      return [value, name];
-                    }}
-                  />
+                  <Tooltip />
                   <Legend />
-                  <Bar dataKey="count" fill="#82ca9d" name="Count" />
+                  <Bar dataKey="male" stackId="a" fill="#ef4444" name="Male" />
+                  <Bar dataKey="female" stackId="a" fill="#3b82f6" name="Female" />
                 </BarChart>
               </ResponsiveContainer>
               {adultStats.length === 0 && (
@@ -97,19 +89,15 @@ export const SummaryDialog = ({ csvData }: SummaryDialogProps) => {
         <div className="mt-6">
           <h3 className="text-lg font-semibold mb-3">Disease Distribution</h3>
           <div className="border rounded-md p-4">
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={400}>
               <BarChart data={stats.diseases} layout="horizontal">
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" />
-                <YAxis dataKey="disease" type="category" width={150} fontSize={12} />
-                <Tooltip
-                  formatter={(value: number, name: string) => {
-                    if (name === 'count') return [value, 'Count'];
-                    return [value, name];
-                  }}
-                />
+                <YAxis dataKey="disease" type="category" width={100} fontSize={11} />
+                <Tooltip />
                 <Legend />
-                <Bar dataKey="count" fill="#f59e0b" name="Count" />
+                <Bar dataKey="male" stackId="a" fill="#ef4444" name="Male" />
+                <Bar dataKey="female" stackId="a" fill="#3b82f6" name="Female" />
               </BarChart>
             </ResponsiveContainer>
           </div>
