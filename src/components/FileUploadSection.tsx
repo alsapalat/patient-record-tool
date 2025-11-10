@@ -60,7 +60,7 @@ export const FileUploadSection = ({ csvData, onFileUpload, onRandomAutofill, onC
             ) : (
               <>
                 {/* Show autofill, summary, export, and clear when data is loaded */}
-                <Button variant="secondary" size="sm" onClick={onRandomAutofill}>
+                <Button className="hidden" variant="secondary" size="sm" onClick={onRandomAutofill}>
                   <Sparkles className="mr-2 h-4 w-4" />
                   Autofill All
                 </Button>
